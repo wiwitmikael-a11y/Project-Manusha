@@ -2,6 +2,7 @@ import React from 'react';
 import { Entity, Character, CodexEntityType } from '../types';
 import { codexData } from '../constants';
 import { HeartIcon, CubeIcon, UserIcon, CogIcon } from './icons/Icons';
+import ChibiSprite from './ChibiSprite';
 
 interface InfoPanelProps {
   entity: Entity;
@@ -33,6 +34,22 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ entity, onClose }) => {
         default: return <CubeIcon className="w-5 h-5"/>;
     }
   };
+  
+  const renderEntityVisual = () => {
+    const isCharacter = codexEntry.type === CodexEntityType.CHARACTER || codexEntry.type === CodexEntityType.NPC;
+    const visualAttrs = codexEntry.attributes?.visuals;
+
+    if (isCharacter && visualAttrs) {
+      return <ChibiSprite
+        base={visualAttrs.base}
+        hair={visualAttrs.hair}
+        outfit={visualAttrs.outfit}
+        weapon={visualAttrs.weapon}
+        className="w-full h-full"
+      />
+    }
+    return <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: codexEntry.svg_code }}></div>;
+  };
 
   return (
     <div className="fixed inset-0 bg-black/60 z-20 flex items-center justify-center" onClick={onClose}>
@@ -45,7 +62,9 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ entity, onClose }) => {
         <h3 className="text-lg font-bold text-cyan-300 flex items-center gap-2">{getIcon()}{codexEntry.name}</h3>
         <p className="text-sm text-slate-400 capitalize">{codexEntry.category.replace(/_/g, ' ')}</p>
         
-        <div className="w-full h-32 bg-slate-900/50 rounded-lg flex items-center justify-center p-2 my-4" dangerouslySetInnerHTML={{ __html: codexEntry.svg_code }}></div>
+        <div className="w-full h-32 bg-slate-900/50 rounded-lg flex items-center justify-center p-2 my-4">
+          {renderEntityVisual()}
+        </div>
 
         <p className="text-sm text-slate-300 mb-4">{codexEntry.description}</p>
 
@@ -65,7 +84,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ entity, onClose }) => {
             <div>
                 <h4 className="font-bold text-slate-200 mb-2 text-sm">Base Attributes</h4>
                 <div className="space-y-1 text-xs">
-                    {Object.entries(codexEntry.attributes).map(([key, value]) => (
+                    {Object.entries(codexEntry.attributes).filter(([key]) => key !== 'visuals').map(([key, value]) => (
                         <div key={key} className="flex justify-between border-b border-slate-700 py-1">
                             <span className="capitalize text-slate-400">{key.replace(/_/g, ' ')}</span>
                             <span className="font-mono font-bold text-cyan-300">{Array.isArray(value) ? value.join(', ') : value.toString()}</span>

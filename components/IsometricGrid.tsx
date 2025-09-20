@@ -1,7 +1,8 @@
 import React from 'react';
-import { Entity } from '../types';
+import { Entity, CodexEntityType } from '../types';
 import { GRID_WIDTH, GRID_HEIGHT, TILE_WIDTH, TILE_HEIGHT } from '../constants';
 import { codexData } from '../constants';
+import ChibiSprite from './ChibiSprite';
 
 interface GameEntityProps {
   entity: Entity;
@@ -18,6 +19,9 @@ const GameEntity: React.FC<GameEntityProps> = ({ entity, onClick }) => {
         </div>
     );
   }
+  
+  const isCharacter = codexEntry.type === CodexEntityType.CHARACTER || codexEntry.type === CodexEntityType.NPC;
+  const visualAttrs = codexEntry.attributes?.visuals;
 
   return (
     <div
@@ -25,10 +29,20 @@ const GameEntity: React.FC<GameEntityProps> = ({ entity, onClick }) => {
       className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-24 cursor-pointer group flex items-center justify-center"
       style={{ transform: 'translateX(-50%)' }}
     >
-      <div 
-        className="w-full h-full group-hover:scale-110 transition-transform"
-        dangerouslySetInnerHTML={{ __html: codexEntry.svg_code }}
-      />
+      {isCharacter && visualAttrs ? (
+        <ChibiSprite 
+          base={visualAttrs.base}
+          hair={visualAttrs.hair}
+          outfit={visualAttrs.outfit}
+          weapon={visualAttrs.weapon}
+          className="w-full h-full group-hover:scale-110 transition-transform"
+        />
+      ) : (
+        <div 
+          className="w-full h-full group-hover:scale-110 transition-transform"
+          dangerouslySetInnerHTML={{ __html: codexEntry.svg_code }}
+        />
+      )}
     </div>
   );
 };
@@ -37,9 +51,10 @@ const GameEntity: React.FC<GameEntityProps> = ({ entity, onClick }) => {
 interface IsometricGridProps {
   entities: Entity[];
   onEntityClick: (entity: Entity) => void;
+  view: { zoom: number; pan: { x: number; y: number } };
 }
 
-const IsometricGrid: React.FC<IsometricGridProps> = ({ entities, onEntityClick }) => {
+const IsometricGrid: React.FC<IsometricGridProps> = ({ entities, onEntityClick, view }) => {
   
   const offsetX = (GRID_HEIGHT) * (TILE_WIDTH / 2);
   
@@ -60,7 +75,10 @@ const IsometricGrid: React.FC<IsometricGridProps> = ({ entities, onEntityClick }
   });
   
   return (
-    <div className="flex items-center justify-center w-full h-full scale-75 md:scale-90 lg:scale-100">
+    <div 
+        className="flex items-center justify-center w-full h-full"
+        style={{ transform: `translate(${view.pan.x}px, ${view.pan.y}px) scale(${view.zoom})` }}
+    >
       <div className="relative" style={{
         width: `${(GRID_WIDTH + GRID_HEIGHT) * (TILE_WIDTH / 2)}px`,
         height: `${(GRID_WIDTH + GRID_HEIGHT) * (TILE_HEIGHT / 2)}px`,

@@ -1,8 +1,11 @@
+
 export enum CodexEntityType {
-    ITEM = 'item',
-    CHARACTER = 'character',
-    STRUCTURE = 'structure',
-    ENVIRONMENT = 'environment',
+    CHARACTER = "character",
+    ENVIRONMENT = "environment",
+    ITEM = "item",
+    STRUCTURE = "structure",
+    BLUEPRINT = "blueprint",
+    NPC = "npc",
 }
 
 export interface BaseEntity {
@@ -25,8 +28,14 @@ export interface Structure extends BaseEntity {
 export interface Environment extends BaseEntity {
     type: CodexEntityType.ENVIRONMENT;
 }
-// An Entity is a BaseEntity that can be rendered on the grid. Items cannot.
-export type Entity = Character | Structure | Environment;
+export interface NPC extends BaseEntity {
+    type: CodexEntityType.NPC;
+    action: string;
+    name?: string;
+}
+
+// An Entity is a BaseEntity that can be rendered on the grid. Items and blueprints cannot.
+export type Entity = Character | Structure | Environment | NPC;
 
 
 export interface GameEvent {
@@ -51,6 +60,7 @@ export interface CodexEntity {
   type: CodexEntityType;
   category: string;
   svg_code: string;
-  attributes?: { [key: string]: any };
+  attributes: { [key: string]: any };
   interactions?: { action: string; [key: string]: any }[];
+  designHints?: string[];
 }

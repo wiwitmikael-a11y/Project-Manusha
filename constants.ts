@@ -1,443 +1,588 @@
+// codexData_full_generated.ts
+// Massive programmatic codex + recipes + loot tables + spawn maps for post-apoc anime game.
+
 import { CodexEntity, CodexEntityType } from './types';
 
+// ---------------------------------
+// Basic constants & types
+// ---------------------------------
 export const GRID_WIDTH = 25;
 export const GRID_HEIGHT = 25;
-export const TILE_WIDTH = 64; // Corresponds to w-16 in Tailwind
-export const TILE_HEIGHT = 32; // Corresponds to h-8 in Tailwind
+export const TILE_WIDTH = 64;
+export const TILE_HEIGHT = 32;
 export const TICK_RATE = 500; // ms per game tick
 export const INITIAL_SURVIVORS = 5;
 export const INITIAL_ZOMBIES = 3;
 
-export const codexData: CodexEntity[] = [
-    // Characters
-    {
-      id: "player_01",
-      name: "Survivor",
-      description: "Someone who survived 'The Fall'. Now must fight to live in a world that is no longer friendly.",
-      type: CodexEntityType.CHARACTER,
-      category: "player",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="player"><rect x="40" y="55" width="20" height="30" fill="#4a4a4a"/><rect x="30" y="30" width="40" height="30" fill="#6b5b4a"/><circle cx="50" cy="20" r="12" fill="#e0a385"/></g></svg>`,
-      attributes: {
-        "hp": 100,
-        "stamina": 100,
-        "hunger": 100,
-        "thirst": 100
-      },
-    },
-    {
-      id: "char_raider_01",
-      name: "Raider",
-      description: "A ruthless scavenger who preys on the weak. Hostile and territorial.",
-      type: CodexEntityType.CHARACTER,
-      category: "enemy",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="raider"><rect x="40" y="55" width="20" height="30" fill="#3d3d3d"/><path d="M30 30 L70 30 L65 60 L35 60 Z" fill="#7d3c3c"/><circle cx="50" cy="20" r="12" fill="#c48a7e"/></g></svg>`,
-      attributes: { "hp": 80, "damage": 15, "speed": 1.2 },
-    },
-    {
-      id: "char_mutant_dog_01",
-      name: "Mutant Dog",
-      description: "A grotesque canine mutated by the fallout. Fast, aggressive, and often hunts in packs.",
-      type: CodexEntityType.CHARACTER,
-      category: "creature",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="mutant_dog" transform="translate(0, 5)"><path d="M25,75 C30,50 70,50 75,75 Z" fill="#6b554a"/><circle cx="35" cy="55" r="5" fill="#c40d0d"/><rect x="30" y="75" width="8" height="15" fill="#6b554a"/><rect x="62" y="75" width="8" height="15" fill="#6b554a"/></g></svg>`,
-      attributes: { "hp": 60, "damage": 12, "speed": 2.0 },
-    },
-    {
-      id: "creature_bloater_01",
-      name: "Bloater",
-      description: "A disgusting mutation whose body is filled with methane gas. Very slow, but its death explosion can be fatal to anyone too close.",
-      type: CodexEntityType.CHARACTER,
-      category: "mutant_hostile",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="bloater"><ellipse cx="50" cy="65" rx="30" ry="35" fill="#7b8a6d"/><circle cx="50" cy="30" r="15" fill="#6a785d"/><circle cx="20" cy="60" r="10" fill="#7b8a6d"/><circle cx="80" cy="60" r="10" fill="#7b8a6d"/><circle cx="40" cy="90" r="8" fill="#7b8a6d"/><circle cx="60" cy="90" r="8" fill="#7b8a6d"/></g></svg>`,
-      attributes: { "hp": 150, "damage": 10, "speed": 0.5, "on_death_effect": "toxic_explosion", "explosion_radius": 3 },
-    },
-    {
-      id: "creature_stalker_01",
-      name: "Stalker",
-      description: "An apex predator that hunts in packs. Its fast, silent movements make it a very serious threat in the city ruins.",
-      type: CodexEntityType.CHARACTER,
-      category: "mutant_hostile",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="stalker"><path d="M20,70 C40,50 60,50 80,70 L50,85 Z" fill="#5a5a5a"/><circle cx="25" cy="60" r="5" fill="#e62e2e"/><path d="M15,75 L30,90" stroke="#5a5a5a" stroke-width="6" stroke-linecap="round"/><path d="M85,75 L70,90" stroke="#5a5a5a" stroke-width="6" stroke-linecap="round"/></g></svg>`,
-      attributes: { "hp": 70, "damage": 25, "speed": 2.0, "behavior": "pack_hunter" },
-    },
-    // Environment
-    {
-      id: "env_dead_tree_01",
-      name: "Dead Tree",
-      description: "Remains of forest life. Its dry trunk can still be used as firewood or building material.",
-      type: CodexEntityType.ENVIRONMENT,
-      category: "resource_source",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="dead_tree"><path d="M50,90 L50,20 M50,60 L30,40 M50,50 L70,30" stroke="#6b4f3a" stroke-width="8" stroke-linecap="round" fill="none"/></g></svg>`,
-      attributes: { "hp": 50, "resource": "wood", "yield": [3, 6] },
-      interactions: [{ action: "chop", tool: "axe" }],
-    },
-    {
-      id: "env_rock_01",
-      name: "Rock Boulder",
-      description: "A rocky outcrop protruding from the ground. A source of hard material for making tools or foundations.",
-      type: CodexEntityType.ENVIRONMENT,
-      category: "resource_source",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><polygon points="5,45 20,15 45,5 70,20 75,45" fill="#a1a1a1" stroke="#4a4a4a" stroke-width="3" stroke-linejoin="round"/></svg>`,
-      attributes: { "hp": 80, "resource": "stone", "yield": [4, 8] },
-      interactions: [{ action: "mine", tool: "pickaxe" }],
-    },
-    {
-      id: "env_scrap_metal_01",
-      name: "Scrap Metal Pile",
-      description: "A heap of rusted metal, remnants of the old world. A valuable source of crafting materials.",
-      type: CodexEntityType.ENVIRONMENT,
-      category: "resource_source",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="scrap_metal"><path d="M20,85 L45,60 L70,65 L80,85 Z" fill="#7f7f7f" stroke="#4a4a4a" stroke-width="2"/><path d="M25,85 L30,70 L55,75 Z" fill="#a1a1a1" stroke="#4a4a4a" stroke-width="1.5"/></g></svg>`,
-      attributes: { "hp": 60, "resource": "metal_scraps", "yield": [2, 5] },
-      interactions: [{ "action": "salvage", "tool": "crowbar" }],
-    },
-    {
-      id: "env_herb_bush_01",
-      name: "Herb Bush",
-      description: "A resilient bush bearing medicinal herbs. Can be harvested for basic remedies.",
-      type: CodexEntityType.ENVIRONMENT,
-      category: "resource_source",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="herb_bush"><circle cx="50" cy="60" r="25" fill="#4a6b4f"/><circle cx="40" cy="70" r="20" fill="#5a7b5f"/><circle cx="60" cy="70" r="20" fill="#5a7b5f"/></g></svg>`,
-      attributes: { "hp": 20, "resource": "medicinal_herbs", "yield": [1, 3] },
-      interactions: [{ "action": "forage" }],
-    },
-    {
-      id: "env_car_wreck_01",
-      name: "Rusted Car Wreck",
-      description: "The husk of a pre-Fall vehicle. Can be salvaged for scrap metal and other components.",
-      type: CodexEntityType.ENVIRONMENT,
-      category: "resource_source",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="car_wreck"><path d="M15,80 L25,50 L75,50 L85,80 Z" fill="#7d3c3c"/><path d="M30,50 L35,40 L65,40 L70,50 Z" fill="#4a3b32" opacity="0.7"/><circle cx="30" cy="80" r="8" fill="#3d3d3d"/><circle cx="70" cy="80" r="8" fill="#3d3d3d"/></g></svg>`,
-      attributes: { "hp": 200, "resource": ["metal_scraps", "electronics"], "yield": [10, 20] },
-      interactions: [{ "action": "salvage", "tool": "crowbar" }],
-    },
-    // Items - Resources
-    {
-      id: "item_wood_01",
-      name: "Wood",
-      description: "A piece of dry wood from a dead tree. Useful for making fires, tools, and simple buildings.",
-      type: CodexEntityType.ITEM,
-      category: "resource",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g transform="rotate(-10 25 15) scale(1.5)" style="transform-origin: center;"><rect x="5" y="5" width="40" height="20" rx="3" fill="#a47b5b" stroke="#5d4037" stroke-width="2"/><path d="M 5 15 C 15 10, 35 10, 45 15" fill="none" stroke="#5d4037" stroke-width="1.5" opacity="0.6"/><path d="M 5 20 C 15 15, 35 15, 45 20" fill="none" stroke="#5d4037" stroke-width="1" opacity="0.5"/></g></svg>`,
-      attributes: { "stackable": true, "stack_size": 20 },
-    },
-    { 
-      id: "res_water_contaminated", 
-      name: "Contaminated Water", 
-      description: "Murky water from puddles or leaky pipes. Dangerous to drink directly.", 
-      type: CodexEntityType.ITEM, 
-      category: "raw_liquid", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="water_contaminated"><path d="M20,80 Q50,60 80,80 L80,90 Q50,70 20,90 Z" fill="#6b7a63" opacity="0.8"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 10, "effects": ["sickness", "radiation_low"]} 
-    },
-    { 
-      id: "res_cloth_tattered", 
-      name: "Tattered Cloth", 
-      description: "Dirty, torn pieces of fabric. Can be processed into bandages or other basic materials.", 
-      type: CodexEntityType.ITEM, 
-      category: "raw_textile", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="cloth_tattered"><path d="M20,30 C30,20 70,40 80,30 L80,70 C70,80 30,60 20,70 Z" fill="#a39e8e"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 50} 
-    },
-    { 
-      id: "res_plastic_scrap", 
-      name: "Scrap Plastic", 
-      description: "Shards of bottles and containers. Lightweight and versatile for crafting.", 
-      type: CodexEntityType.ITEM, 
-      category: "raw_material", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="plastic_scrap"><path d="M30 80 L20 60 L40 50 L50 70 Z" fill="#d1d1d1"/><path d="M50 85 L60 55 L80 60 Z" fill="#e0e0e0"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 50} 
-    },
-    { 
-      id: "res_electronics_scrap", 
-      name: "Electronics Scrap", 
-      description: "Circuits and wires from broken devices. Crucial for advanced technology.", 
-      type: CodexEntityType.ITEM, 
-      category: "rare_material", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="electronics_scrap"><rect x="25" y="40" width="50" height="30" rx="3" fill="#3a5a4a"/><rect x="35" y="45" width="10" height="10" fill="#f1c40f"/><line x1="60" y1="50" x2="70" y2="50" stroke="#c0392b" stroke-width="3"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 20} 
-    },
-    { 
-      id: "res_gunpowder", 
-      name: "Gunpowder", 
-      description: "A volatile chemical mixture for making ammunition and explosives.", 
-      type: CodexEntityType.ITEM, 
-      category: "processed_material", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="gunpowder"><path d="M30,80 L30,50 L70,50 L70,80 Z" fill="#6b5b4a"/><polygon points="30,50 70,50 50,30" fill="#6b5b4a"/><circle cx="50" cy="65" r="15" fill="#4a4a4a"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 20} 
-    },
-    // Items - Tools
-    {
-      id: "item_stone_axe_01",
-      name: "Stone Axe",
-      description: "A crude tool made from a sharp stone and a piece of wood. Effective for chopping down trees.",
-      type: CodexEntityType.ITEM,
-      category: "tool",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="stone_axe" transform="rotate(45, 50, 50)"><rect x="20" y="45" width="60" height="10" rx="3" fill="#8c6d4e"/><path d="M75,35 L90,50 L75,65 Z" fill="#b0b0b0" stroke="#555" stroke-width="1.5"/></g></svg>`,
-      attributes: { "stackable": false, "durability": 50, "damage": 8, "efficiency": 1.5 },
-      interactions: [{ action: "equip" }],
-    },
-    {
-      id: "item_makeshift_spear_01",
-      name: "Makeshift Spear",
-      description: "A sharpened piece of wood or metal attached to a long stick. Better reach than a simple axe.",
-      type: CodexEntityType.ITEM,
-      category: "weapon",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="makeshift_spear" transform="rotate(45, 50, 50)"><rect x="10" y="47" width="80" height="6" fill="#8c6d4e"/><path d="M85,40 L95,50 L85,60 Z" fill="#a1a1a1" stroke="#4a4a4a" stroke-width="1"/></g></svg>`,
-      attributes: { "stackable": false, "durability": 40, "damage": 12, "range": 1.5 },
-      interactions: [{ "action": "equip" }],
-    },
-    { 
-      id: "tool_crowbar", 
-      name: "Crowbar", 
-      description: "A sturdy steel bar. Useful for prying open doors and crates.", 
-      type: CodexEntityType.ITEM, 
-      category: "tool_utility", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="crowbar" transform="rotate(45, 50, 50)"><rect x="10" y="45" width="80" height="10" fill="#c0392b"/><path d="M85,45 L90,40 L90,60 L85,55" fill="#c0392b"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 12, "utility": "force_open"} 
-    },
-    { 
-      id: "tool_hammer", 
-      name: "Hammer", 
-      description: "A basic tool for building and repairing structures.", 
-      type: CodexEntityType.ITEM, 
-      category: "tool_crafting", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="hammer" transform="rotate(-45, 50, 50)"><rect x="45" y="10" width="10" height="60" rx="2" fill="#8c6d4e"/><rect x="30" y="10" width="40" height="15" fill="#a1a1a1"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 10, "utility": "build_repair"} 
-    },
-    { 
-      id: "tool_wrench", 
-      name: "Wrench", 
-      description: "For repairing machinery, generators, and dismantling mechanical devices.", 
-      type: CodexEntityType.ITEM, 
-      category: "tool_crafting", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="wrench" transform="rotate(-45, 50, 50)"><rect x="45" y="30" width="10" height="60" rx="2" fill="#a1a1a1"/><path d="M40 15 L60 15 L65 30 L35 30 Z" fill="#7f7f7f"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 9, "utility": "repair_mechanical"} 
-    },
-    { 
-      id: "tool_fishing_rod", 
-      name: "Fishing Rod", 
-      description: "Made from a branch and string, for catching fish in water sources.", 
-      type: CodexEntityType.ITEM, 
-      category: "tool_gathering", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="fishing_rod" transform="rotate(45, 50, 50)"><path d="M10 90 L90 10" stroke="#8c6d4e" stroke-width="4"/><path d="M90 10 C 70 50, 60 70, 50 90" stroke="#d1d1d1" stroke-width="1.5" fill="none"/></g></svg>`, 
-      attributes: {"stackable": false, "utility": "gather_fish"} 
-    },
-    { 
-      id: "tool_geiger_counter", 
-      name: "Geiger Counter", 
-      description: "Detects radiation levels in the vicinity. Clicks faster in hazardous zones.", 
-      type: CodexEntityType.ITEM, 
-      category: "tool_utility", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="geiger_counter"><rect x="30" y="20" width="40" height="60" rx="4" fill="#2c3e50"/><rect x="35" y="25" width="30" height="20" fill="#2ecc71"/><circle cx="50" cy="65" r="10" fill="#34495e"/></g></svg>`, 
-      attributes: {"stackable": false, "utility": "detect_radiation"} 
-    },
-    // Items - Weapons (Melee)
-    { 
-      id: "weapon_melee_bat", 
-      name: "Baseball Bat", 
-      description: "A relic of an old-world sport, now a skull-cracking tool.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_melee", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="baseball_bat" transform="rotate(45, 50, 50)"><path d="M10,45 L80,45 L90,50 L80,55 L10,55 Z" fill="#8c6d4e"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 18, "speed": 1.1, "knockback": 0.5} 
-    },
-    { 
-      id: "weapon_melee_machete", 
-      name: "Machete", 
-      description: "A large, heavy knife, great for hacking through undergrowth and mutants.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_melee", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="machete" transform="rotate(45, 50, 50)"><rect x="10" y="45" width="30" height="10" fill="#4a4a4a"/><path d="M40,40 L90,40 C95,45 95,55 90,60 L40,60 Z" fill="#a1a1a1"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 22, "speed": 1.3, "effect": "bleeding"} 
-    },
-    { 
-      id: "weapon_melee_fireaxe", 
-      name: "Fire Axe", 
-      description: "A heavy axe that can break down wooden doors and bones equally well.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_melee", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="fire_axe" transform="rotate(45, 50, 50)"><rect x="10" y="45" width="80" height="10" fill="#c0392b"/><path d="M70,25 L90,25 L90,45 L80,45 Z" fill="#a1a1a1"/><path d="M70,65 L90,65 L90,55 L80,55 Z" fill="#a1a1a1"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 30, "speed": 0.8, "utility": "chop_wood_door"} 
-    },
-    { 
-      id: "weapon_melee_riotshield", 
-      name: "Riot Shield", 
-      description: "Provides significant protection from melee attacks and projectiles.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_offhand", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="riot_shield"><rect x="25" y="10" width="50" height="80" rx="10" fill="#2c3e50" stroke="#7f7f7f" stroke-width="3"/></g></svg>`, 
-      attributes: {"stackable": false, "defense": 40, "utility": "block"} 
-    },
-    { 
-      id: "weapon_melee_sledgehammer", 
-      name: "Sledgehammer", 
-      description: "Extremely heavy and slow, but its hits can demolish walls and enemies.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_melee", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="sledgehammer" transform="rotate(45, 50, 50)"><rect x="10" y="45" width="70" height="10" rx="2" fill="#6b4f3a"/><rect x="75" y="30" width="20" height="40" fill="#4a4a4a"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 45, "speed": 0.5, "utility": "demolish"} 
-    },
-     // Items - Weapons (Ranged)
-    { 
-      id: "weapon_ranged_pipegun", 
-      name: "Pipe Gun", 
-      description: "A crafted weapon that's inaccurate and prone to jamming, but better than nothing.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_firearm", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="pipe_gun"><rect x="40" y="45" width="50" height="8" fill="#7f7f7f"/><rect x="25" y="50" width="20" height="15" fill="#8c6d4e"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 25, "ammo_type": "crude_bullet", "fire_rate": 0.5, "accuracy": 40} 
-    },
-    { 
-      id: "weapon_ranged_huntingrifle", 
-      name: "Hunting Rifle", 
-      description: "Accurate for medium to long range. Every shot must be calculated.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_firearm", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="hunting_rifle"><rect x="20" y="46" width="80" height="8" fill="#5d4037"/><rect x="30" y="54" width="25" height="12" fill="#6b4f3a"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": 60, "ammo_type": ".308_round", "fire_rate": 0.8, "accuracy": 85} 
-    },
-    { 
-      id: "weapon_ranged_sawedoff", 
-      name: "Sawed-off Shotgun", 
-      description: "Brutal at close range, but its spread makes it useless at a distance.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_firearm", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="sawedoff_shotgun"><rect x="40" y="45" width="40" height="10" fill="#4a4a4a"/><rect x="25" y="50" width="20" height="15" fill="#8c6d4e"/></g></svg>`, 
-      attributes: {"stackable": false, "damage": "15x8", "ammo_type": "shotgun_shell", "range": 5, "spread": 25} 
-    },
-    { 
-      id: "weapon_explosive_molotov", 
-      name: "Molotov Cocktail", 
-      description: "A bottle filled with flammable liquid. Creates an area of fire on impact.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_explosive", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="molotov_cocktail"><path d="M40,90 C30,60 30,40 50,20 C70,40 70,60 60,90 Z" fill="#2ecc71" opacity="0.6"/><rect x="45" y="10" width="10" height="20" fill="#a39e8e"/><path d="M50,10 C60,5 55,20 50,10Z" fill="#f1c40f"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 5, "damage_type": "fire_area", "duration": 10} 
-    },
-    { 
-      id: "weapon_explosive_grenade", 
-      name: "Grenade", 
-      description: "Standard military explosive. Pull the pin, throw, and take cover.", 
-      type: CodexEntityType.ITEM, 
-      category: "weapon_explosive", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="grenade"><ellipse cx="50" cy="60" rx="20" ry="25" fill="#2c3e50"/><rect x="45" y="25" width="10" height="15" fill="#7f7f7f"/><rect x="55" y="30" width="10" height="5" rx="2" fill="#e74c3c"/></g></svg>`, 
-      attributes: {"stackable": true, "stack_size": 5, "damage": 150, "radius": 5, "fuse_time": 4} 
-    },
-    {
-      id: "item_crossbow_01",
-      name: "Crossbow",
-      description: "A silent weapon perfect for ambushes. Makes no noise, but its reload time is quite long.",
-      type: CodexEntityType.ITEM,
-      category: "weapon_ranged",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="crossbow" transform="rotate(45, 50, 50)"><rect x="10" y="47" width="80" height="6" fill="#6b4f3a"/><rect x="5" y="35" width="6" height="30" fill="#5d4037"/><path d="M10 35 L10 65" stroke="#c4c4c4" stroke-width="1.5"/></g></svg>`,
-      attributes: { "stackable": false, "damage": 50, "range": 15, "fire_rate": 0.2, "ammo_type": "bolt", "noise_level": 0 },
-      interactions: [{ action: "equip" }],
-    },
-     // Items - Apparel
-    {
-      id: "equip_gasmask_01",
-      name: "Gas Mask",
-      description: "Protects the respiratory system from spores, toxic gases, and irradiated air. Its filter must be replaced periodically.",
-      type: CodexEntityType.ITEM,
-      category: "apparel_head",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="gas_mask"><path d="M25,30 C20,50 20,70 50,80 C80,70 80,50 75,30 Z" fill="#4a4a4a"/><circle cx="35" cy="50" r="10" fill="#2c3e50" stroke="#a1a1a1" stroke-width="2"/><circle cx="65" cy="50" r="10" fill="#2c3e50" stroke="#a1a1a1" stroke-width="2"/><rect x="40" y="75" width="20" height="15" rx="3" fill="#7f7f7f"/></g></svg>`,
-      attributes: { "stackable": false, "durability": 100, "protection_type": ["toxic", "radiation_low"], "slot": "head" },
-      interactions: [{ action: "equip" }],
-    },
-    { 
-      id: "armor_torso_leatherjacket", 
-      name: "Leather Jacket", 
-      description: "Provides basic protection from light scratches and blows.", 
-      type: CodexEntityType.ITEM, 
-      category: "apparel_torso", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="leather_jacket"><path d="M20,30 L80,30 L70,80 L30,80 Z" fill="#4a3b32"/><path d="M50,30 L50,80" stroke="#2c221c" stroke-width="3"/></g></svg>`, 
-      attributes: {"stackable": false, "defense": 10, "slot": "torso"} 
-    },
-    { 
-      id: "armor_head_riothelmet", 
-      name: "Riot Helmet", 
-      description: "A sturdy helmet with a face shield, providing good head protection.", 
-      type: CodexEntityType.ITEM, 
-      category: "apparel_head", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="riot_helmet"><path d="M20,50 C20,20 80,20 80,50 Z" fill="#2c3e50"/><rect x="30" y="40" width="40" height="15" fill="#7f8c8d" opacity="0.7"/></g></svg>`, 
-      attributes: {"stackable": false, "defense": 15, "slot": "head"} 
-    },
-    { 
-      id: "armor_torso_tacticalvest", 
-      name: "Tactical Vest", 
-      description: "A military vest with extra pouches. Increases carrying capacity.", 
-      type: CodexEntityType.ITEM, 
-      category: "apparel_torso", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="tactical_vest"><path d="M25,30 L75,30 L65,80 L35,80 Z" fill="#3a5a4a"/><rect x="35" y="40" width="10" height="15" fill="#2f483d"/><rect x="55" y="40" width="10" height="15" fill="#2f483d"/></g></svg>`, 
-      attributes: {"stackable": false, "defense": 8, "inventory_bonus": 10, "slot": "torso"} 
-    },
-    { 
-      id: "armor_back_backpack", 
-      name: "Backpack", 
-      description: "A simple backpack to carry more loot.", 
-      type: CodexEntityType.ITEM, 
-      category: "apparel_back", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="backpack"><rect x="25" y="20" width="50" height="60" rx="8" fill="#6b5b4a"/><rect x="35" y="30" width="30" height="10" fill="#5d4037"/></g></svg>`, 
-      attributes: {"stackable": false, "inventory_bonus": 25, "slot": "back"} 
-    },
-    { 
-      id: "armor_full_hazmat", 
-      name: "Hazmat Suit", 
-      description: "Full-body protective clothing against high radiation and biological hazards.", 
-      type: CodexEntityType.ITEM, 
-      category: "apparel_fullbody", 
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="hazmat_suit"><path d="M25,90 L25,40 C25,20 75,20 75,40 L75,90 Z" fill="#f1c40f"/><circle cx="50" cy="40" r="20" fill="#f1c40f"/><rect x="40" y="30" width="20" height="20" fill="#7f8c8d" opacity="0.8"/></g></svg>`, 
-      attributes: {"stackable": false, "defense": 5, "resist_radiation": 95, "resist_toxic": 95, "slot": "fullbody"} 
-    },
-    // Structures
-    {
-      id: "struct_campfire_01",
-      name: "Campfire",
-      description: "A controlled pile of burning wood. Provides warmth, light, and the ability to cook raw food.",
-      type: CodexEntityType.STRUCTURE,
-      category: "utility",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="campfire"><path d="M30,80 L70,80 L65,70 L35,70 Z" fill="#5d4037"/><path d="M50,70 C40,55 60,55 50,40 C50,55 40,55 50,70 Z" fill="#FFC107"/><path d="M45,70 C40,60 50,60 48,50 C48,60 40,60 45,70 Z" fill="#FF5722"/></g></svg>`,
-      attributes: { "hp": 30, "fuel": 0, "max_fuel": 100, "cook_slots": 1, "light_radius": 5 },
-      interactions: [{ action: "add_fuel", item: "wood" }, { action: "cook", item: "raw_meat" }],
-    },
-    {
-      id: "struct_workbench_01",
-      name: "Workbench",
-      description: "A sturdy table with tools, necessary for crafting more complex items and equipment.",
-      type: CodexEntityType.STRUCTURE,
-      category: "crafting",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="workbench"><path d="M20,80 L30,70 L80,70 L70,80 Z" fill="#6b4f3a"/><rect x="15" y="55" width="70" height="15" rx="2" fill="#8c6d4e" stroke="#5d4037" stroke-width="2"/></g></svg>`,
-      attributes: { "hp": 100, "craft_tier": 2 },
-      interactions: [{ "action": "craft" }],
-    },
-    {
-      id: "struct_wooden_wall_01",
-      name: "Wooden Wall",
-      description: "A simple defensive barrier made from scavenged wood. Provides basic protection from threats.",
-      type: CodexEntityType.STRUCTURE,
-      category: "defense",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="wooden_wall"><rect x="20" y="10" width="15" height="80" fill="#8c6d4e"/><rect x="42" y="10" width="15" height="80" fill="#8c6d4e"/><rect x="64" y="10" width="15" height="80" fill="#8c6d4e"/><rect x="10" y="20" width="80" height="8" fill="#6b4f3a"/><rect x="10" y="70" width="80" height="8" fill="#6b4f3a"/></g></svg>`,
-      attributes: { "hp": 150, "defense_rating": 10 },
-    },
-    {
-      id: "struct_purifier_01",
-      name: "Water Purifier",
-      description: "A device assembled to filter impurities and radiation from water, making it drinkable. Requires power to operate.",
-      type: CodexEntityType.STRUCTURE,
-      category: "utility_advanced",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="water_purifier"><rect x="25" y="40" width="50" height="50" rx="5" fill="#a1a1a1"/><rect x="30" y="45" width="40" height="20" fill="#3498db" opacity="0.5"/><rect x="30" y="70" width="40" height="15" fill="#3498db"/><rect x="55" y="30" width="10" height="10" fill="#f1c40f"/></g></svg>`,
-      attributes: { "hp": 80, "input_slot": "contaminated_water", "output_slot": "purified_water", "process_time": 120, "power_consumption": 5 },
-      interactions: [{ action: "fill" }, { action: "collect" }],
-    },
-    {
-      id: "struct_generator_01",
-      name: "Small Generator",
-      description: "A noisy machine from the old world. Burns fuel to generate electricity, bringing back a glimmer of civilization.",
-      type: CodexEntityType.STRUCTURE,
-      category: "utility_advanced",
-      svg_code: `<svg viewBox="0 0 100 100" width="100%" height="100%"><g id="small_generator"><rect x="20" y="50" width="60" height="40" rx="4" fill="#c0392b"/><rect x="25" y="40" width="20" height="10" fill="#2c3e50"/><rect x="65" y="60" width="10" height="20" fill="#f1c40f"/><path d="M50 50 L50 30 L60 30" fill="none" stroke="#2c3e50" stroke-width="4"/></g></svg>`,
-      attributes: { "hp": 100, "fuel_capacity": 50, "fuel_type": "gasoline", "power_output": 20, "noise_radius": 10 },
-      interactions: [{ action: "refuel" }, { action: "toggle" }],
-    }
+// ---------------------------------
+// Helpers: id, small svg/textures
+// ---------------------------------
+function pad(n: number, len = 3) { return String(n).padStart(len, "0"); }
+function uid(prefix: string, idx: number) { return `${prefix}_${pad(idx)}`; }
+function clamp(n: number, a: number, b: number) {
+  return Math.max(a, Math.min(b, n));
+}
+
+function animePalette(seed = 0) {
+  const palettes = [
+    ["#f1c27d", "#7b5a3a", "#2b2b2b"],
+    ["#d98880", "#4a235a", "#1c1c2b"],
+    ["#a3d9ff", "#2b6a8a", "#0f2b3b"],
+    ["#f6e58d", "#b57a57", "#2a2a2a"],
+    ["#b0e57c", "#556b2f", "#15220f"],
+    ["#ffd1dc", "#69263f", "#24121b"],
   ];
+  return palettes[seed % palettes.length];
+}
+
+function svgBackdrop(seed: number, name: string) {
+  // Returns only the opening SVG tag for a transparent background.
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">`;
+}
+function svgFinish() { return `</svg>`; }
+
+// ---------------------------------
+// Template pool (same approach as earlier, tuned counts)
+// ---------------------------------
+type Template = {
+  prefix: string;
+  baseName: string;
+  type: CodexEntityType;
+  category: string;
+  count: number;
+  makeAttributes: (i: number, globalIdx: number) => Record<string, any>;
+  makeInteractions?: (i: number, globalIdx: number) => any[];
+  designHintBase?: string;
+  svgMaker?: (i: number, globalIdx: number) => string;
+};
+
+const templates: Template[] = [
+  // Characters - survivors (varied professions)
+  {
+    prefix: "char_survivor",
+    baseName: "Survivor",
+    type: CodexEntityType.CHARACTER,
+    category: "player",
+    count: 40,
+    makeAttributes: (i, g) => {
+        const baseTypes = ['male', 'female'];
+        const hairTypes = ['hair1', 'hair2', 'hair3', 'hair4', 'hair5'];
+        const outfitTypes = ['jacket', 'hoodie', 'armor', 'scavenger', 'worker'];
+        const weaponTypes = ['knife', 'bat', 'pistol', 'rifle', 'none'];
+        return {
+          hp: 80 + (i % 5) * 6,
+          stamina: 70 + (i % 6) * 5,
+          hunger: 100,
+          thirst: 100,
+          speed: 1.6 + ((i % 4) * 0.12),
+          profession: ["scavenger", "mechanic", "medic", "hunter", "engineer", "cook"][i % 6],
+          inventoryCap: 20 + (i % 5) * 5,
+          visuals: {
+                base: baseTypes[g % baseTypes.length],
+                hair: hairTypes[g % hairTypes.length],
+                outfit: outfitTypes[g % outfitTypes.length],
+                weapon: weaponTypes[g % weaponTypes.length],
+            }
+        };
+    },
+    makeInteractions: (i) => [{ action: "talk" }, { action: "trade" }, { action: "quest" }],
+    designHintBase: "anime-survivor: cel-shading, bandaged sleeve, ribbon accessory, dusty palette",
+  },
+
+  // Raiders
+  {
+    prefix: "char_raider",
+    baseName: "Raider",
+    type: CodexEntityType.CHARACTER,
+    category: "enemy_raider",
+    count: 45,
+    makeAttributes: (i, g) => {
+        const baseTypes = ['male', 'female'];
+        const hairTypes = ['hair1', 'hair3', 'hair5'];
+        const outfitTypes = ['armor', 'scavenger', 'jacket'];
+        const weaponTypes = ['knife', 'bat', 'pistol', 'rifle'];
+        return {
+            hp: 70 + (i % 7) * 6,
+            damage: 10 + (i % 6) * 3,
+            speed: 1.7 + (i % 3) * 0.18,
+            aggression: 50 + (i % 50),
+            lootTier: 1 + (i % 4),
+            visuals: {
+                base: baseTypes[g % baseTypes.length],
+                hair: hairTypes[g % hairTypes.length],
+                outfit: outfitTypes[g % outfitTypes.length],
+                weapon: weaponTypes[g % weaponTypes.length],
+            }
+        };
+    },
+    makeInteractions: (i) => [{ action: "attack" }, { action: "raze" }],
+    designHintBase: "dusty leather, patched armor, scratched visor, graffiti sigils",
+  },
+
+  // Mutants (various types)
+  {
+    prefix: "char_mutant",
+    baseName: "Mutant",
+    type: CodexEntityType.CHARACTER,
+    category: "creature",
+    count: 70,
+    makeAttributes: (i, g) => ({
+      hp: 40 + (i % 9) * 9,
+      damage: 8 + (i % 6) * 4,
+      speed: 1.1 + (i % 5) * 0.22,
+      mutationLevel: 1 + (i % 6),
+      behavior: ["feral", "pack", "ambush", "volatile", "lurker"][i % 5],
+      visuals: {
+            base: 'mutant',
+            outfit: 'mutant_skin',
+      }
+    }),
+    makeInteractions: (i) => [{ action: "hunt" }, { action: "pack_hunt" }],
+    designHintBase: "mutant: crackled skin, luminescent marks, elongated limbs",
+  },
+
+  // Environment: trees, rocks, scrap piles, bushes, car wrecks
+  {
+    prefix: "env_tree",
+    baseName: "DeadTree",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "resource_tree",
+    count: 36,
+    makeAttributes: (i) => ({ hp: 40 + (i % 4) * 12, resource: "wood", yieldMin: 2 + (i % 3), yieldMax: 6 + (i % 5) }),
+    makeInteractions: (i) => [{ action: "chop", tool: "axe", time: 3 + (i%4) }],
+    designHintBase: "gnarled branches, flaky bark details, moss streaks",
+    svgMaker: (i, g) => `${svgBackdrop(g, 'tree') }
+      <rect x="46" y="45" width="8" height="40" fill="#6b4f3a"/>
+      <path d="M20 55 C40 30 60 30 80 55" fill="#8c6d4e" opacity="0.95"/>
+    ${svgFinish()}`
+  },
+  {
+    prefix: "env_rock",
+    baseName: "Stone",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "resource_rock",
+    count: 28,
+    makeAttributes: (i) => ({ hp: 60 + (i%4)*14, resource: "stone", yieldMin: 3 + (i%3), yieldMax: 9 + (i%6) }),
+    makeInteractions: (i) => [{ action: "mine", tool: "pickaxe", time: 4 + (i%3) }],
+    designHintBase: "layered rock strata, mineral veins, small lichen patches",
+    svgMaker: (i, g) => `${svgBackdrop(g, 'rock') }<polygon points="30,80 50,30 70,80" fill="#7f8c8d" stroke="#333" stroke-width="2"/>${svgFinish()}`
+  },
+  {
+    prefix: "env_scrap",
+    baseName: "ScrapPile",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "resource_scrap",
+    count: 36,
+    makeAttributes: (i) => ({ hp: 30 + (i%5)*6, resource: ["metal_scraps","electronics"][i%2], yieldMin: 1, yieldMax: 6 }),
+    makeInteractions: (i) => [{ action: "salvage", tool: "crowbar", time: 2 + (i%4) }],
+    designHintBase: "rusted plates, coils, tangled wires, anime-labeled crate fragments",
+    svgMaker: (i, g) => `${svgBackdrop(g, 'scrap') }<path d="M20,85 L40,60 L70,65 L85,85 Z" fill="#7f7f7f"/>${svgFinish()}`
+  },
+  {
+    prefix: "env_bush",
+    baseName: "HerbBush",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "resource_herb",
+    count: 20,
+    makeAttributes: (i) => ({ hp: 18 + (i%3)*6, resource: "medicinal_herbs", yieldMin: 1, yieldMax: 3 }),
+    makeInteractions: (i) => [{ action: "forage", time: 1 + (i%2) }],
+    designHintBase: "soft leaf clusters, tiny sparkles (anime healing herbs)",
+    svgMaker: (i, g) => `${svgBackdrop(g, 'bush') }<circle cx="50" cy="60" r="25" fill="#4a6b4f"/><circle cx="40" cy="70" r="18" fill="#5a7b5f"/><circle cx="60" cy="70" r="18" fill="#5a7b5f"/>${svgFinish()}`
+  },
+  {
+    prefix: "env_car",
+    baseName: "CarWreck",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "vehicle_wreck",
+    count: 16,
+    makeAttributes: (i) => ({ hp: 150 + (i % 4) * 70, resource: ["metal_scraps","electronics"], yieldMin: 6, yieldMax: 18 }),
+    makeInteractions: (i) => [{ action: "salvage", tool: "crowbar", time: 5 + (i%4) }],
+    designHintBase: "shattered windshield, graffiti, neon residue, anime-sticker decals",
+    svgMaker: (i,g) => `${svgBackdrop(g,'car') }<rect x="15" y="50" width="70" height="25" fill="#7d3c3c"/><circle cx="30" cy="80" r="6" fill="#333"/><circle cx="70" cy="80" r="6" fill="#333"/>${svgFinish()}`
+  },
+
+  // Structures
+  {
+    prefix: "struct_workbench",
+    baseName: "Workbench",
+    type: CodexEntityType.STRUCTURE,
+    category: "crafting",
+    count: 10,
+    makeAttributes: (i) => ({ hp: 120, craftTier: 2 + (i % 2) }),
+    makeInteractions: (i) => [{ action: "craft", slotCount: 2 }],
+    designHintBase: "stained wood, tool hooks, cute anime sticker",
+    svgMaker: (i,g) => `${svgBackdrop(g,'workbench') }<rect x="15" y="60" width="70" height="20" fill="#6b4f3a" stroke="#3b2b20" stroke-width="2"/>${svgFinish()}`
+  },
+  {
+    prefix: "struct_generator",
+    baseName: "Generator",
+    type: CodexEntityType.STRUCTURE,
+    category: "utility_power",
+    count: 8,
+    makeAttributes: (i) => ({ hp: 140, fuelCapacity: 60, powerOutput: 20 + (i%4)*6, noiseRadius: 8 }),
+    makeInteractions: (i) => [{ action: "refuel", fuelType: "gasoline" }, { action: "toggle" }],
+    designHintBase: "oil stains, vents, glowing coil, anime steam puffs",
+    svgMaker: (i,g) => `${svgBackdrop(g,'generator') }<rect x="24" y="45" width="52" height="35" rx="4" fill="#c0392b"/><circle cx="70" cy="65" r="6" fill="#f1c40f"/>${svgFinish()}`
+  },
+  {
+    prefix: "struct_purifier",
+    baseName: "WaterPurifier",
+    type: CodexEntityType.STRUCTURE,
+    category: "utility_water",
+    count: 8,
+    makeAttributes: (i) => ({ hp: 100, processTime: 120, powerConsumption: 5, input: "contaminated_water", output: "purified_water" }),
+    makeInteractions: (i) => [{ action: "fill", item: "contaminated_water" }, { action: "collect", item: "purified_water" }],
+    designHintBase: "glass canisters, glowing filters, anime UI indicators",
+    svgMaker: (i,g) => `${svgBackdrop(g,'purifier') }<rect x="30" y="30" width="40" height="55" rx="4" fill="#3498db" opacity="0.6"/>${svgFinish()}`
+  },
+
+  // Materials - base
+  {
+    prefix: "mat_wood",
+    baseName: "WoodPlank",
+    type: CodexEntityType.ITEM,
+    category: "material",
+    count: 48,
+    makeAttributes: (i) => ({ stackable:true, stackSize: 50, quality: 1 + (i%3) }),
+    designHintBase: "wood grain patterns, worn nails, anime soot smudges",
+    svgMaker: (i,g) => `${svgBackdrop(g,'wood') }<rect x="20" y="35" width="60" height="30" fill="#a47b5b"/>${svgFinish()}`
+  },
+  {
+    prefix: "mat_metal",
+    baseName: "MetalScrap",
+    type: CodexEntityType.ITEM,
+    category: "material",
+    count: 48,
+    makeAttributes: (i) => ({ stackable:true, stackSize: 40, corrosion: (i%4) }),
+    designHintBase: "rust streaks, riveted plates, solder splashes",
+    svgMaker: (i,g) => `${svgBackdrop(g,'metal') }<rect x="20" y="50" width="60" height="20" fill="#7f8c8d" stroke="#4a4a4a"/>${svgFinish()}`
+  },
+
+  // Consumables
+  {
+    prefix: "cons_food",
+    baseName: "Ration",
+    type: CodexEntityType.ITEM,
+    category: "consumable_food",
+    count: 36,
+    makeAttributes: (i) => ({ stackable:true, stackSize: 10, nutrition: 10 + (i%6)*3, spoilTime: 1440 + (i%4)*300 }),
+    designHintBase: "anime food tin labels, dusty edges, cute mascot logos",
+    svgMaker: (i,g) => `${svgBackdrop(g,'food') }<rect x="30" y="35" width="40" height="30" rx="4" fill="#ffd1a1"/>${svgFinish()}`
+  },
+  {
+    prefix: "cons_med",
+    baseName: "MedKit",
+    type: CodexEntityType.ITEM,
+    category: "consumable_medical",
+    count: 32,
+    makeAttributes: (i) => ({ stackable:true, stackSize: 5, heal: 20 + (i%4)*10 }),
+    designHintBase: "clean white box, stylized red cross anime crest",
+    svgMaker: (i,g) => `${svgBackdrop(g,'med') }<rect x="30" y="30" width="40" height="40" rx="6" fill="#fff" stroke="#e74c3c" stroke-width="3"/><path d="M45 45 h10 v20 h-10 z" fill="#e74c3c"/>${svgFinish()}`
+  },
+
+  // Tools & crafting
+  {
+    prefix: "tool_hand",
+    baseName: "HandTool",
+    type: CodexEntityType.ITEM,
+    category: "tool",
+    count: 56,
+    makeAttributes: (i) => ({ durability:50 + (i%7)*8, utility: ["mine","chop","repair","salvage","dig"][(i%5)] }),
+    designHintBase: "wrapped grips, tape, tiny anime insignia",
+    svgMaker: (i,g) => `${svgBackdrop(g,'tool') }<rect x="45" y="20" width="8" height="60" fill="#8c6d4e"/><rect x="30" y="60" width="40" height="8" fill="#bdc3c7"/>${svgFinish()}`
+  },
+
+  // Weapons melee & ranged
+  {
+    prefix: "wpn_melee",
+    baseName: "MeleeWeapon",
+    type: CodexEntityType.ITEM,
+    category: "weapon_melee",
+    count: 60,
+    makeAttributes: (i) => ({ durability:60 + (i%8)*10, damage: 10 + (i%8)*5, speed: clamp(1.4 - (i%6)*0.08, 0.5, 1.4) }),
+    designHintBase: "battle-worn edge, taped handle, ribbon charm",
+    svgMaker: (i,g) => `${svgBackdrop(g,'melee') }<rect x="48" y="20" width="4" height="60" fill="#8c6d4e"/><polygon points="48,20 56,20 70,40 30,40" fill="#ecf0f1"/>${svgFinish()}`
+  },
+  {
+    prefix: "wpn_ranged",
+    baseName: "RangedWeapon",
+    type: CodexEntityType.ITEM,
+    category: "weapon_ranged",
+    count: 44,
+    makeAttributes: (i) => ({ durability:40 + (i%6)*12, damage: 20 + (i%9)*6, ammoType: ["bullet","shell","bolt"][i%3], accuracy: 60 + (i%6)*5 }),
+    designHintBase: "rusty barrel, taped stock, anime charm dangling",
+    svgMaker: (i,g) => `${svgBackdrop(g,'ranged') }<rect x="30" y="40" width="40" height="10" fill="#7f8c8d"/><rect x="15" y="52" width="18" height="10" fill="#6b4f3a"/>${svgFinish()}`
+  },
+
+  // Blueprints / engineering
+  {
+    prefix: "bp_basic",
+    baseName: "Blueprint",
+    type: CodexEntityType.BLUEPRINT,
+    category: "blueprint",
+    count: 40,
+    makeAttributes: (i) => ({ requiredMaterials: null, craftTime: 30 + (i%6)*8, unlockTier: 1 + (i%4) }),
+    designHintBase: "schematic lines, stamped workshop seal, aged paper anime stickers",
+    svgMaker: (i,g) => `${svgBackdrop(g,'bp') }<rect x="10" y="10" width="80" height="80" fill="#fff" opacity="0.95"/><line x1="20" x2="80" y1="30" y2="30" stroke="#333" stroke-width="1"/>${svgFinish()}`
+  },
+
+  // Furniture & decorative (useful for shelter/comfort)
+  {
+    prefix: "furn",
+    baseName: "Furniture",
+    type: CodexEntityType.ITEM,
+    category: "furniture",
+    count: 28,
+    makeAttributes: (i) => ({ hp:40 + (i%6)*12, comfort:1 + (i%4) }),
+    designHintBase: "patched upholstery, anime posters, LED strips",
+    svgMaker: (i,g) => `${svgBackdrop(g,'furn') }<rect x="20" y="40" width="60" height="30" fill="#6b4f3a"/>${svgFinish()}`
+  },
+
+  // Electronics / modules
+  {
+    prefix: "mod",
+    baseName: "Module",
+    type: CodexEntityType.ITEM,
+    category: "electronic",
+    count: 28,
+    makeAttributes: (i) => ({ rarity: 1 + (i%5), powerUse: 1 + (i%4), function: ["sensor","cpu","motor","battery","chip"][i%5] }),
+    designHintBase: "microtraces, glowing LEDs, tiny kanji decals",
+    svgMaker: (i,g) => `${svgBackdrop(g,'mod') }<rect x="30" y="30" width="40" height="40" fill="#2ecc71" rx="3"/><circle cx="50" cy="50" r="6" fill="#34495e"/>${svgFinish()}`
+  },
+
+  // Vehicles / big wrecks
+  {
+    prefix: "veh_wreck",
+    baseName: "VehicleWreck",
+    type: CodexEntityType.ENVIRONMENT,
+    category: "vehicle",
+    count: 14,
+    makeAttributes: (i) => ({ hp:150 + (i%4)*50, lootTier: 2 + (i%3) }),
+    makeInteractions: (i) => [{ action: "salvage", tool: "crowbar", time: 6 + (i%6) }],
+    designHintBase: "shattered glass, neon residue, engine cores, anime decals",
+    svgMaker: (i,g) => `${svgBackdrop(g,'veh') }<rect x="15" y="50" width="70" height="25" fill="#7d3c3c"/><circle cx="30" cy="80" r="6" fill="#333"/><circle cx="70" cy="80" r="6" fill="#333"/>${svgFinish()}`
+  },
+
+  // Traps
+  {
+    prefix: "trap",
+    baseName: "Trap",
+    type: CodexEntityType.ITEM,
+    category: "defense",
+    count: 22,
+    makeAttributes: (i) => ({ triggerDamage:20 + (i%6)*8, durability:20 + (i%5)*12, trapType: ["wire","pit","spike","noise"][i%4] }),
+    designHintBase: "barbs, spike sheen, warning paint, anime hazard decals",
+    svgMaker: (i,g) => `${svgBackdrop(g,'trap') }<rect x="30" y="60" width="40" height="8" fill="#2c3e50"/><path d="M30 60 L35 48 L40 60 L45 48 L50 60 L55 48 L60 60" fill="#c0392b" opacity="0.9"/>${svgFinish()}`
+  },
+
+  // NPCs (vendors, quest givers)
+  {
+    prefix: "npc_vendor",
+    baseName: "Vendor",
+    type: CodexEntityType.NPC,
+    category: "npc_vendor",
+    count: 22,
+    makeAttributes: (i, g) => {
+        const baseTypes = ['male', 'female'];
+        const hairTypes = ['hair2', 'hair4'];
+        const outfitTypes = ['hoodie', 'worker'];
+        return {
+            hp: 80,
+            barterSkill: 10 + (i % 8),
+            inventorySize: 10 + (i % 6),
+            visuals: {
+                base: baseTypes[g % baseTypes.length],
+                hair: hairTypes[g % hairTypes.length],
+                outfit: outfitTypes[g % outfitTypes.length],
+                weapon: 'none',
+            }
+        };
+    },
+    makeInteractions: (i) => [{ action: "trade" }, { action: "gossip" }],
+    designHintBase: "anime tiny stall banners, patched aprons, emotive expressions",
+  },
+
+  // Turrets
+  {
+    prefix: "turret",
+    baseName: "AutoTurret",
+    type: CodexEntityType.STRUCTURE,
+    category: "defense_turret",
+    count: 10,
+    makeAttributes: (i) => ({ hp:120 + (i%4)*40, damage:25 + (i%4)*6, range:6 + (i%3) }),
+    makeInteractions: (i) => [{ action: "power" }, { action: "upgrade" }],
+    designHintBase: "rivets, rotating head, muzzle glow, anime sparks",
+    svgMaker: (i,g) => `${svgBackdrop(g,'turret') }<rect x="35" y="35" width="30" height="30" fill="#34495e"/><rect x="48" y="20" width="4" height="20" fill="#333"/>${svgFinish()}`
+  },
+];
+
+// ---------------------------------
+// Generate codexData (array)
+// ---------------------------------
+export const codexData: CodexEntity[] = (function generate() {
+  const out: CodexEntity[] = [];
+  let globalIdx = 1;
+  for (const t of templates) {
+    for (let i = 0; i < t.count; i++) {
+      const gid = globalIdx++;
+      const id = uid(t.prefix, gid);
+      const name = `${t.baseName} ${gid}`;
+      const isCharacter = t.type === CodexEntityType.CHARACTER || t.type === CodexEntityType.NPC;
+      
+      const svg = isCharacter ? '' : (t.svgMaker) ? t.svgMaker(i, gid) : (svgBackdrop(gid, t.baseName) + `<rect x="20" y="30" width="60" height="40" fill="#aaa"/>` + svgFinish());
+      
+      const attrs = t.makeAttributes ? t.makeAttributes(i, gid) : {};
+      const interactions = t.makeInteractions ? t.makeInteractions(i, gid) : undefined;
+      const desc = `${t.baseName} — variant #${gid}. ${t.designHintBase ?? ""}`.trim();
+
+      out.push({
+        id,
+        name,
+        description: desc,
+        type: t.type,
+        category: t.category,
+        svg_code: svg,
+        attributes: attrs,
+        interactions,
+        designHints: [t.designHintBase ?? "anime post-apoc style", `variant:${gid}`, `paletteSeed:${gid % 6}`],
+      });
+    }
+  }
+
+  // Ensure ≥ 500 entities (safety filler)
+  const MIN = 500;
+  while (out.length < MIN) {
+    const gid = globalIdx++;
+    out.push({
+      id: uid("mat_fill", gid),
+      name: `Common Scrap ${gid}`,
+      description: "Placeholder scrap material.",
+      type: CodexEntityType.ITEM,
+      category: "material_fill",
+      svg_code: svgBackdrop(gid, "scrap") + `<rect x="20" y="40" width="60" height="20" fill="#9b7a5a" opacity="0.95"/>` + svgFinish(),
+      attributes: { stackable: true, stackSize: 100 },
+      designHints: ["filler scrap", `paletteSeed:${gid % 6}`]
+    });
+  }
+
+  return out;
+})();
+
+// ---------------------------------
+// Crafting recipes generator
+// ---------------------------------
+type Recipe = {
+  id: string; // e.g., recipe_wpns_001
+  name: string;
+  output: { id: string; qty: number };
+  required: Array<{ id: string; qty: number }>;
+  craftTime: number; // seconds
+  station?: string; // e.g., "workbench"
+  unlockTier?: number;
+};
+
+function sampleMaterialIdsByCategory(catPrefix: string, amount = 6) {
+  const candidates = codexData.filter(e => e.category.includes(catPrefix) || e.id.includes(catPrefix));
+  if (candidates.length === 0) return codexData.slice(0, amount).map(c => c.id);
+  return candidates.slice(0, Math.min(amount, candidates.length)).map(c => c.id);
+}
+
+export const recipes: Recipe[] = (function genRecipes() {
+  const out: Recipe[] = [];
+  let rIdx = 1;
+
+  const blueprintItems = codexData.filter(e => e.type === CodexEntityType.BLUEPRINT);
+  const materialPool = sampleMaterialIdsByCategory("material", 60);
+
+  for (let i = 0; i < blueprintItems.length; i++) {
+    const bp = blueprintItems[i];
+    const reqCount = 2 + (i % 4);
+    const reqs = [];
+    for (let j = 0; j < reqCount; j++) {
+      const matId = materialPool[(i + j) % materialPool.length];
+      const qty = 1 + ((i + j) % 6);
+      reqs.push({ id: matId, qty });
+    }
+    out.push({
+      id: `recipe_bp_${pad(rIdx++)}`,
+      name: `Recipe for ${bp.name || bp.id}`,
+      output: { id: bp.id, qty: 1 },
+      required: reqs,
+      craftTime: 30 + (i % 6) * 8,
+      station: "workbench",
+      unlockTier: 1 + (i % 4),
+    });
+  }
+  return out;
+})();
+
+// ---------------------------------
+// Loot tables (by source type)
+// ---------------------------------
+export type LootEntry = { id: string; weight: number; qtyMin?: number; qtyMax?: number; probability?: number };
+
+function pickMaterialsForLoot(prefixGuess: string, limit = 8): LootEntry[] {
+  const pool = codexData.filter(e => e.category.includes(prefixGuess) || e.type === CodexEntityType.ITEM);
+  const slice = pool.slice(0, Math.min(limit, pool.length));
+  return slice.map((s, i) => ({ id: s.id, weight: Math.max(1, 10 - (i % 8)), qtyMin: 1, qtyMax: 1 + (i%4) }));
+}
+
+const foodEntry = codexData.find(e => e.category === "consumable_food");
+export const lootTables: Record<string, LootEntry[]> = {
+  "scrap_pile": pickMaterialsForLoot("material", 8),
+  "car_wreck": pickMaterialsForLoot("vehicle", 10),
+  "raider_drop": pickMaterialsForLoot("weapon", 8).concat(foodEntry ? [{ id: foodEntry.id, weight: 4, qtyMin:1, qtyMax:2 }] : []),
+  "mutant_trophies": pickMaterialsForLoot("creature", 6),
+  "workbench_loot": pickMaterialsForLoot("tool", 10),
+  "vendor_stock": pickMaterialsForLoot("consumable", 12),
+};
+
+// ---------------------------------
+// Spawn map / biome mapping & spawn chances
+// ---------------------------------
+export type SpawnRule = { category: string; weight: number; minCount: number; maxCount: number; minRarity?: number };
+
+export const spawnMap: Record<string, SpawnRule[]> = {
+  "urban_ruins": [
+    { category: "enemy_raider", weight: 12, minCount: 1, maxCount: 4 },
+    { category: "vehicle_wreck", weight: 6, minCount: 0, maxCount: 2 },
+    { category: "resource_scrap", weight: 18, minCount: 1, maxCount: 6 },
+    { category: "npc_vendor", weight: 2, minCount: 0, maxCount: 1 },
+  ],
+  "wasteland": [
+    { category: "creature", weight: 18, minCount: 1, maxCount: 6 },
+    { category: "resource_rock", weight: 10, minCount: 1, maxCount: 4 },
+    { category: "resource_tree", weight: 6, minCount: 0, maxCount: 3 },
+  ],
+  "forested_ruins": [
+    { category: "resource_tree", weight: 18, minCount: 2, maxCount: 6 },
+    { category: "creature", weight: 10, minCount: 1, maxCount: 3 },
+    { category: "resource_herb", weight: 8, minCount: 1, maxCount: 4 },
+  ],
+};
+
+// ---------------------------------
+// Runtime utility functions
+// ---------------------------------
+/** getEntitiesByCategory: returns matching codex entries. */
+export function getEntitiesByCategory(category: string): CodexEntity[] {
+  return codexData.filter(e => e.category === category || e.category.includes(category) || e.id.includes(category));
+}
+
+/** spawnEntitiesForBiome: produce list of entity categories to spawn */
+export function spawnEntitiesForBiome(biome: string, rngSeed = 1001): Array<{ category: string; count: number }> {
+  const rules = spawnMap[biome] ?? [];
+  if (!rules.length) return [];
+  const out: Array<{ category: string; count: number }> = [];
+  let seed = rngSeed;
+  function randInt(a: number, b: number) { seed = (seed * 1103515245 + 12345) % 2147483648; return a + (seed % (b - a + 1)); }
+  for (const r of rules) {
+    const roll = randInt(1, 100);
+    const threshold = Math.min(90, r.weight * 3 + 10);
+    if (roll <= threshold) {
+      const count = randInt(r.minCount, r.maxCount);
+      if (count > 0) out.push({ category: r.category, count });
+    }
+  }
+  return out;
+}
